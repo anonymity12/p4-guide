@@ -1,6 +1,8 @@
 -----------------when sendp by scapy, show in simple switch as follow------------------
 # record at 0117 2019 Thu
 
+------------------send valid pkt without raw data----------------
+
 [14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Processing packet received on port 0
 [14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser 'parser': start
 [14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser 'parser' entering state 'start'
@@ -68,6 +70,9 @@ Action entry: egress.rewrite_mac - 1122334455,
 [14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Deparsing header 'ipv4'
 [14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Deparser 'deparser': end
 [14:08:01.858] [bmv2] [D] [thread 23026] [0.0] [cxt 0] Transmitting packet of size 54 out of port 2
+
+------------------send invalid pkt without raw data----------------
+
 [14:17:55.132] [bmv2] [T] [thread 23445] bm_mt_read_counter
 [14:19:51.856] [bmv2] [D] [thread 23021] [1.0] [cxt 0] Processing packet received on port 0
 [14:19:51.856] [bmv2] [D] [thread 23021] [1.0] [cxt 0] Parser 'parser': start
@@ -103,6 +108,9 @@ Action entry: egress.rewrite_mac - 1122334455,
 [14:19:51.856] [bmv2] [D] [thread 23021] [1.0] [cxt 0] Egress port is 511
 [14:19:51.856] [bmv2] [D] [thread 23021] [1.0] [cxt 0] Dropping packet at the end of ingress
 [14:19:57.885] [bmv2] [T] [thread 23445] bm_mt_read_counter
+
+------------------send valid pkt with raw data----------------
+
 [14:20:14.366] [bmv2] [D] [thread 23021] [2.0] [cxt 0] Processing packet received on port 0
 [14:20:14.366] [bmv2] [D] [thread 23021] [2.0] [cxt 0] Parser 'parser': start
 [14:20:14.366] [bmv2] [D] [thread 23021] [2.0] [cxt 0] Parser 'parser' entering state 'start'
