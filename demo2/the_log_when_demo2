@@ -1,0 +1,70 @@
+-----------------when sendp by scapy, show in simple switch as follow------------------
+
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Processing packet received on port 0
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser 'parser': start
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser 'parser' entering state 'start'
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Extracting header 'ethernet'
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser state 'start': key is 0800
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] Bytes parsed: 14
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Extracting header 'ipv4'
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser state 'parse_ipv4' has no switch, going to default next state
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] Bytes parsed: 34
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Verifying checksum 'cksum': true
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Verifying checksum 'cksum_0': true
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Parser 'parser': end
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Pipeline 'ingress': start
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] Applying table 'ingress.ipv4_da_lpm'
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr    : 0a010001
+
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Table 'ingress.ipv4_da_lpm': hit with handle 0
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0a010001/32
+Action entry: ingress.set_l2ptr - 3a,
+
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Action entry is ingress.set_l2ptr - 3a,
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] Action ingress.set_l2ptr
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] demo2.p4_16.p4(91) Primitive meta.fwd_metadata.l2ptr = l2ptr
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] Applying table 'ingress.mac_da'
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Looking up key:
+* meta.fwd_metadata.l2ptr: 0000003a
+
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Table 'ingress.mac_da': hit with handle 1
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Dumping entry 1
+Match key:
+* meta.fwd_metadata.l2ptr: EXACT     0000003a
+Action entry: ingress.set_bd_dmac_intf - 9,21357abcdef,2,
+
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Action entry is ingress.set_bd_dmac_intf - 9,21357abcdef,2,
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] Action ingress.set_bd_dmac_intf
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] demo2.p4_16.p4(110) Primitive meta.fwd_metadata.out_bd = bd
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] demo2.p4_16.p4(111) Primitive hdr.ethernet.dstAddr = dmac
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] demo2.p4_16.p4(112) Primitive standard_metadata.egress_spec = intf
+[14:08:01.858] [bmv2] [T] [thread 23021] [0.0] [cxt 0] demo2.p4_16.p4(113) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Pipeline 'ingress': end
+[14:08:01.858] [bmv2] [D] [thread 23021] [0.0] [cxt 0] Egress port is 2
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Pipeline 'egress': start
+[14:08:01.858] [bmv2] [T] [thread 23024] [0.0] [cxt 0] Applying table 'egress.send_frame'
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Looking up key:
+* meta.fwd_metadata.out_bd: 000009
+
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Table 'egress.send_frame': hit with handle 0
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Dumping entry 0
+Match key:
+* meta.fwd_metadata.out_bd: EXACT     000009
+Action entry: egress.rewrite_mac - 1122334455,
+
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Action entry is egress.rewrite_mac - 1122334455,
+[14:08:01.858] [bmv2] [T] [thread 23024] [0.0] [cxt 0] Action egress.rewrite_mac
+[14:08:01.858] [bmv2] [T] [thread 23024] [0.0] [cxt 0] demo2.p4_16.p4(137) Primitive hdr.ethernet.srcAddr = smac
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Pipeline 'egress': end
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Deparser 'deparser': start
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Updating checksum 'cksum'
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Updating checksum 'cksum_0'
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Deparsing header 'ethernet'
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Deparsing header 'ipv4'
+[14:08:01.858] [bmv2] [D] [thread 23024] [0.0] [cxt 0] Deparser 'deparser': end
+[14:08:01.858] [bmv2] [D] [thread 23026] [0.0] [cxt 0] Transmitting packet of size 54 out of port 2
+
