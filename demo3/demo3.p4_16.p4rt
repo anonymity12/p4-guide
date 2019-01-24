@@ -1,0 +1,26 @@
+C
+7΅ingress.compute_ipv4_hashescompute_ipv4_hashesΞÿ@€b
+'Δ„ingress.ipv4_da_lpmipv4_da_lpmhdr.ipv4.dstAddr  (‡€ΰε‚Σΐ€:Λ¦ƒ@€{
+%ΗΚ‚ingress.ecmp_group
+ecmp_group( meta.fwd_metadata.ecmp_group_idx 
+(Εί‚ÿ¨·¶@default_only()@€€ 
+#Ξ’ingress.ecmp_path	ecmp_path( meta.fwd_metadata.ecmp_group_idx 
+(,$meta.fwd_metadata.ecmp_path_selector (ÿ¨·¶@default_only()@€€Q
+µ‚ingress.mac_damac_dameta.fwd_metadata.l2ptr  (Υ°ƒ‹«‚@€Y
+$‘egress.send_frame
+send_frame meta.fwd_metadata.out_bd (©£€‹«‚@€
+·¶NoActionNoAction
+‹«‚my_dropmy_drop=
+;Ξÿingress.compute_lkp_ipv4_hashcompute_lkp_ipv4_hashF
+7‡€ingress.set_l2ptr_with_statset_l2ptr_with_statl2ptr  M
+5ΰε‚ingress.set_ecmp_group_idxset_ecmp_group_idxecmp_group_idx 
+5
+3Σΐ€ingress.my_drop_with_statmy_drop_with_statF
+3Εί‚ingress.set_ecmp_path_idxset_ecmp_path_idx	num_paths 2
+#ÿ¨ingress.set_l2ptr	set_l2ptrl2ptr  U
+1Υ°ƒingress.set_bd_dmac_intfset_bd_dmac_intfbd 
+dmac 0
+intf 	4
+&©£€egress.rewrite_macrewrite_mac
+smac 02?
+4Λ¦ƒingress.ipv4_da_lpm_statsipv4_da_lpm_statsΔ„
