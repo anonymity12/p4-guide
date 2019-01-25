@@ -53,10 +53,25 @@ Add both sets of entries below:
 
     # For P4_16 program, set_l2ptr action name for table ipv4_da_lpm
     # is changed to set_l2ptr_with_stat.
+    
+    # what these three do: 
+    # what u see, actually are : 
+    # 1. when 10.1.0.1 hit, in L2, we give it a ptr of 58
+    # 1.1 which means that 58 will be used in next table(mac_da table)
+    # 1.2 next table (mac_da table) is used for get some info about: 
+    # 1.3 1. bridge domain, 2. dst_mac(eg: PC2 mac:02:13:57...) 3. intf(eg: egress port is 2)
+    # 2. when 58 is hit in mac_da table
+    # 2.1 we can get info that given by Control Panel previously
+    # 2.2 we put info we get from CP into metadata; like 
     table_add ipv4_da_lpm set_l2ptr_with_stat 10.1.0.1/32 => 58
+    # 2.3 meta.fwd_metadata.out_db = 9;//here 9 is just we saw in following
     table_add mac_da set_bd_dmac_intf 58 => 9 02:13:57:ab:cd:ef 2
+    # 3. ok, last we will see how we rewrite the pkt's src mac
     table_add send_frame rewrite_mac 9 => 00:11:22:33:44:55
 
+    # what these three do:
+    # actually the same as above, except for this one is for pkt who 
+    # looking for 10.1.0.200
     table_add ipv4_da_lpm set_l2ptr_with_stat 10.1.0.200/32 => 81
     table_add mac_da set_bd_dmac_intf 81 => 15 08:de:ad:be:ef:00 1
     table_add send_frame rewrite_mac 15 => ca:fe:ba:be:d0:0d
@@ -82,7 +97,15 @@ I want all packets that match 11.1.0.1/32 to go through a 3-way ECMP
 table to output ports 1, 2, and 3, where ports 1 and 2 reuse the
 mac_da table entries added above.
 
+tt: what he means: when u send pkt to 11.1.0.1(not 10.1.0.1 nor 10.1.0.200, which 
+are add above by hand), the P4 switch will use ECMP to forward this pkt(to 11.1.0.1)
+
     # mac_da and send_frame table entries for output port 3
+    # tt watch out: here we don't see anything like: set_l2ptr...things 
+    # so how pkt reach to port 3? aka: when will l2ptr will set to 101, (so 
+    # that we can send pkt to port3, by point l2 action with index 101)
+    # tdo: 0125: see `table_add ecmp_path set_l2ptr 67 2 => 101` that's where
+    # the 101(l2ptr) was set (so that we can send pkt to port 3)
     table_add mac_da set_bd_dmac_intf 101 => 22 08:de:ad:be:ef:00 3
     table_add send_frame rewrite_mac 22 => ca:fe:ba:be:d0:0d
     
