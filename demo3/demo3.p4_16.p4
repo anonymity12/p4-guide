@@ -103,7 +103,7 @@ control ingress(inout headers hdr,
         actions = {
             compute_lkp_ipv4_hash;
         }
-        default_action = compute_lkp_ipv4_hash;
+        default_action = compute_lkp_ipv4_hash;// exe when no match key
     }
 
     action set_l2ptr_with_stat(bit<32> l2ptr) {
