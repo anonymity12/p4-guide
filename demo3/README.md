@@ -53,25 +53,10 @@ Add both sets of entries below:
 
     # For P4_16 program, set_l2ptr action name for table ipv4_da_lpm
     # is changed to set_l2ptr_with_stat.
-    
-    # what these three do: 
-    # what u see, actually are : 
-    # 1. when 10.1.0.1 hit, in L2, we give it a ptr of 58
-    # 1.1 which means that 58 will be used in next table(mac_da table)
-    # 1.2 next table (mac_da table) is used for get some info about: 
-    # 1.3 1. bridge domain, 2. dst_mac(eg: PC2 mac:02:13:57...) 3. intf(eg: egress port is 2)
-    # 2. when 58 is hit in mac_da table
-    # 2.1 we can get info that given by Control Panel previously
-    # 2.2 we put info we get from CP into metadata; like 
     table_add ipv4_da_lpm set_l2ptr_with_stat 10.1.0.1/32 => 58
-    # 2.3 meta.fwd_metadata.out_db = 9;//here 9 is just we saw in following
     table_add mac_da set_bd_dmac_intf 58 => 9 02:13:57:ab:cd:ef 2
-    # 3. ok, last we will see how we rewrite the pkt's src mac
     table_add send_frame rewrite_mac 9 => 00:11:22:33:44:55
 
-    # what these three do:
-    # actually the same as above, except for this one is for pkt who 
-    # looking for 10.1.0.200
     table_add ipv4_da_lpm set_l2ptr_with_stat 10.1.0.200/32 => 81
     table_add mac_da set_bd_dmac_intf 81 => 15 08:de:ad:be:ef:00 1
     table_add send_frame rewrite_mac 15 => ca:fe:ba:be:d0:0d
@@ -92,6 +77,21 @@ new ecmp_group table.
 Here is a first try at using the ecmp_group and ecmp_path tables for
 forwarding packets.  It assumes that the table entries above are
 already added.
+
+I want all packets that match 11.1.0.1/32 to go through a 3-way ECMP
+table to output ports 1, 2, and 3, where ports 1 and 2 reuse the
+mac_da table entries added above.
+
+    # mac_da and send_frame table entries for output port 3
+    table_add mac_da set_bd_dmac_intf 101 => 22 08:de:ad:be:ef:00 3
+    table_add send_frame rewrite_mac 22 => ca:fe:ba:be:d0:0d
+    
+    # LPM entry pointing at ecmp group idx 67.
+    # Then ecmp_group entry for ecmp group idx 67 that returns num_paths=3.
+    # Then 3 ecmp_path entries with ecmp group idx 67, and
+    # ecmp_path_selector values in the range [0,2], each giving a
+    # result with a different l2ptr value.
+
 
 I want all packets that match 11.1.0.1/32 to go through a 3-way ECMP
 table to output ports 1, 2, and 3, where ports 1 and 2 reuse the
@@ -219,26 +219,3 @@ some packet header field values specified in action
 compute_lkp_ipv4_hash.
 
 If you send an input packet like this:
-
-    same as pattern 1
-
-and you create the following table entries:
-
-    table_add ipv4_da_lpm set_ecmp_group_idx <hdr.ipv4.dstAddr>/32 => <ecmp_group_idx>
-    table_add ecmp_group set_ecmp_path_idx <ecmp_group_idx> => <num_paths>
-    table_add ecmp_path set_l2ptr <ecmp_group_idx> <ecmp_path_selector> => <l2ptr>
-    same as pattern 1 from table mac_da onwards
-
-NOTE: <ecmp_path_selector> is a hash calculated from the packet, then
-modulo'd by <num_paths>, so it can be any number in the range [0,
-<num_paths>-1].  For this pattern, it would be good to install
-<num_paths> entries in the ecmp_path table, and for each one of those
-<l2ptr> values, there should be corresponding entries in the mac_da
-and send_frame tables.  It is OK to have multiple ecmp_path entries
-with the same <l2ptr> value -- this is normal when software creates
-such tables, especially across different <ecmp_group_idx> values.
-
-When checking the output packet, it is correct to receive an output
-packet for any of the <num_paths> possible paths.  If the test
-environment wants to narrow it down to 1 possible output packet, it
-must do the same hash function that the data path code is doing.
